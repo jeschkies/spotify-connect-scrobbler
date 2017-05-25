@@ -48,6 +48,19 @@ def connect_spotify():
     print(response)
 
 
+def recently_played_tracks():
+    # Query Spotify for the recently played tracks of user.
+    payload = {}
+    headers = {'Authorization': 'Bearer <TOKEN>'}
+    response = requests.get(
+            'https://api.spotify.com/v1/me/player/recently-played',
+            data=payload, headers=headers).json()
+    for item in response['items']:
+        track = item['track']['name']
+        artists = [ a['name'] for a in item['track']['artists'] ]
+        print("{} by {}".format(track, ', '.join(artists)))
+
+
 def lastfm_sign(parameters):
     sorted_params = ("{}{}".format(k, parameters[k])
                      for k
@@ -92,8 +105,9 @@ def connect_lastfm():
 
 
 def main():
-    connect_spotify()
+    # connect_spotify()
     # connect_lastfm()
+    recently_played_tracks()
 
 
 if __name__ == "__main__":
