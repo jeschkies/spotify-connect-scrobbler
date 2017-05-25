@@ -5,11 +5,11 @@ import requests
 import secrets
 import urllib
 
-LASTFM_API_KEY = os.environ['LASTFM_API_KEY']
-LASTFM_API_SECRET = os.environ['LASTFM_API_SECRET']
+# LASTFM_API_KEY = os.environ['LASTFM_API_KEY']
+# LASTFM_API_SECRET = os.environ['LASTFM_API_SECRET']
 
-# SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
-# SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
+SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
+SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
 
 
 def connect_spotify():
@@ -21,6 +21,7 @@ def connect_spotify():
         'client_id': SPOTIFY_CLIENT_ID,
         'response_type': 'code',
         'redirect_uri': 'https://localhost:4000/steps/2',
+        'scope': 'user-read-recently-played',
         'state': request_secret
     }
     params = ("{}={}".format(param, value) for param, value in payload.items())
@@ -91,8 +92,8 @@ def connect_lastfm():
 
 
 def main():
-    # connect_spotify()
-    connect_lastfm()
+    connect_spotify()
+    # connect_lastfm()
 
 
 if __name__ == "__main__":
