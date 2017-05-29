@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import dateutil.parser
+from dateutil.tz import tzutc
 import hashlib
 import os
 import requests
@@ -51,14 +53,15 @@ def connect_spotify():
 def recently_played_tracks():
     # Query Spotify for the recently played tracks of user.
     payload = {}
-    headers = {'Authorization': 'Bearer <TOKEN>'}
+    headers = {'Authorization': '<ACCESS TOKEN>'}
     response = requests.get(
             'https://api.spotify.com/v1/me/player/recently-played',
             data=payload, headers=headers).json()
     for item in response['items']:
         track = item['track']['name']
         artists = [ a['name'] for a in item['track']['artists'] ]
-        print("{} by {}".format(track, ', '.join(artists)))
+        played_at = int(dateutil.parser.parse(item['played_at']).replace(tzinfo=tzutc()).timestamp())
+        print("{} by {} at {} ".format(track, ', '.join(artists), played_at))
 
 
 def lastfm_sign(parameters):
