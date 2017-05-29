@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import dateutil.parser
-from dateutil.tz import tzutc
 import hashlib
 import os
 import requests
