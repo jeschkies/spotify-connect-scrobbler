@@ -4,9 +4,6 @@ import requests
 import secrets
 import urllib
 
-SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
-SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
-
 class SpotifyClient:
     """ A simple client for the Spotify Web API."""
 
@@ -50,21 +47,19 @@ class SpotifyClient:
                 'https://accounts.spotify.com/api/token', data=payload).json()
 
 
-    def recently_played_tracks():
+    def recently_played_tracks(self):
         # Query Spotify for the recently played tracks of user.
         payload = {}
-        headers = {'Authorization': '<ACCESS TOKEN>'}
-        response = requests.get(
-                'https://api.spotify.com/v1/me/player/recently-played',
+        headers = {'Authorization': '<BEARER TOKEN>'}
+        return requests.get(
+                'https://api.spotify.com/v1/me/player/recently-played?limit=50',
                 data=payload, headers=headers).json()
-        for item in response['items']:
-            track = item['track']['name']
-            artists = [ a['name'] for a in item['track']['artists'] ]
-            played_at = int(dateutil.parser.parse(item['played_at']).replace(tzinfo=tzutc()).timestamp())
-            print("{} by {} at {} ".format(track, ', '.join(artists), played_at))
 
 
 if __name__ == "__main__":
+    SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
+    SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
+
     client = SpotifyClient()
     auth_url = client.request_authorization()
     print('Go to:')

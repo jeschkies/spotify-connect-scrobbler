@@ -1,5 +1,7 @@
+#!/usr/bin/env python
 import dateutil.parser
 from dateutil.tz import tzutc
+from .spotify import SpotifyClient
 
 def to_posix_timestamp(dt):
     """Converts dt to POSIX timestamp.
@@ -19,3 +21,15 @@ def convert_to_lastfm(item):
     played_at = to_posix_timestamp(dateutil.parser.parse(item['played_at']))
 
     return {'name': track, 'artists': artists, 'played_at': played_at}
+
+
+def main():
+    client = SpotifyClient()
+    response = client.recently_played_tracks()
+    tracks = [convert_to_lastfm(item) for item in response['items']]
+
+    print(tracks)
+
+
+if __name__ == "__main__":
+    main()

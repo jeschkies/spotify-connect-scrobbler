@@ -61,6 +61,29 @@ class LastfmClient:
             'https://ws.audioscrobbler.com/2.0/', params=payload).json()
 
 
+    def scrobble(self, tracks):
+        """ Scrobble tracks.
+
+        Args:
+            tracks (list(dict)): List over {name, artists, played_at}
+        """
+        payload = {
+            'api_key': LASTFM_API_KEY,
+            'method': 'track.scrobble',
+            'sk': '<SESSION KEY>'
+        }
+
+        for i, track in enumerate(tracks):
+            payload["track[{}]".format(i)] = track['name']
+            payload["artist[{}]".format(i)] = track['artists'][0]
+            payload["timestamp[{}]".format(i)] = track['played_at']
+
+        payload['api_sig'] = self.sign(payload)
+        payload['format'] = 'json'
+        return requests.post(
+            'https://ws.audioscrobbler.com/2.0/', params=payload).json()
+
+
 if __name__ == "__main__":
     client = LastfmClient()
     auth_url = client.request_authorization()
