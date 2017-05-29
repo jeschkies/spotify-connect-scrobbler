@@ -1,4 +1,7 @@
-# spotify-connect-scrobbler
+# A Spotify Connect Scrobbler
+
+[![Build Status](https://travis-ci.org/jeschkies/spotify-connect-scrobbler.svg?branch=master)](https://travis-ci.org/jeschkies/spotify-connect-scrobbler)
+
 A Small Webservice That Scrobbles Spotify Connect Plays
 
 # Build Instructions
