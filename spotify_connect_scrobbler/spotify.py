@@ -2,6 +2,7 @@
 import os
 import requests
 import secrets
+import sys
 import urllib
 
 class SpotifyClient:
@@ -47,13 +48,26 @@ class SpotifyClient:
                 'https://accounts.spotify.com/api/token', data=payload).json()
 
 
-    def recently_played_tracks(self):
-        # Query Spotify for the recently played tracks of user.
+    def recently_played_tracks(self, auth):
+        """Query Spotify for the recently played tracks of user.
+
+        Args:
+            auth (dict): The authentication dictionary returned by Spotify.
+
+        Returns:
+            dict: A dictionary including tracks and metadata.
+        """
         payload = {}
-        headers = {'Authorization': '<BEARER TOKEN>'}
-        return requests.get(
+        token = "{} {}".format(auth['token_type'], auth['access_token'])
+        headers = {'Authorization': token}
+        response = requests.get(
                 'https://api.spotify.com/v1/me/player/recently-played?limit=50',
-                data=payload, headers=headers).json()
+                data=payload, headers=headers)
+        if response.ok:
+            return response
+        else:
+            print(response.text)
+            sys.exit(1)
 
 
 if __name__ == "__main__":

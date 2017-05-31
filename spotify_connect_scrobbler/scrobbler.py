@@ -1,6 +1,9 @@
 #!/usr/bin/env python
+import click
 import dateutil.parser
 from dateutil.tz import tzutc
+import json
+
 from .spotify import SpotifyClient
 
 def to_posix_timestamp(dt):
@@ -23,9 +26,16 @@ def convert_to_lastfm(item):
     return {'name': track, 'artists': artists, 'played_at': played_at}
 
 
-def main():
+@click.command()
+@click.argument('config_file', type=click.File('r'))
+def main(config_file):
+    """Retrieves recently played tracks from Spotify and scrobbles them to
+       Last.fm.
+    """
+    config = json.load(config_file)
+
     client = SpotifyClient()
-    response = client.recently_played_tracks()
+    response = client.recently_played_tracks(config['spotify'])
     tracks = [convert_to_lastfm(item) for item in response['items']]
 
     print(tracks)
