@@ -4,11 +4,19 @@ import os
 import requests
 import urllib
 
-LASTFM_API_KEY = os.environ['LASTFM_API_KEY']
-LASTFM_API_SECRET = os.environ['LASTFM_API_SECRET']
-
 class LastfmClient:
     """ A simple client for the Last.fm API."""
+
+    def __init__(self, key, secret):
+        """Creates a Last.fm client.
+
+        Args:
+            key (str): Web API key.
+            secret (str): Web API secret.
+        """
+        self.__key = key
+        self.__secret = secret
+
 
     def sign(self, parameters):
         """ Generates the signature for autheorized API calls.
@@ -25,7 +33,7 @@ class LastfmClient:
 
         md5 = hashlib.md5()
 
-        string = "{}{}".format(''.join(sorted_params), LASTFM_API_SECRET)
+        string = "{}{}".format(''.join(sorted_params), self.__secret)
         md5.update(string.encode('utf-8'))
         return md5.hexdigest()
 
@@ -33,7 +41,7 @@ class LastfmClient:
     def request_authorization(self):
         """ Returns authorization URL."""
         payload = {
-            'api_key': LASTFM_API_KEY,
+            'api_key': self.__key,
             'cb': 'https://localhost:4000/steps/3',
         }
         params = ("{}={}".format(param, value) for param, value in payload.items())
@@ -51,7 +59,7 @@ class LastfmClient:
             dict: Response from get session call.
         """
         payload = {
-            'api_key': LASTFM_API_KEY,
+            'api_key': self.__key,
             'method': 'auth.getSession',
             'token': token
         }
@@ -61,16 +69,16 @@ class LastfmClient:
             'https://ws.audioscrobbler.com/2.0/', params=payload).json()
 
 
-    def scrobble(self, tracks):
+    def scrobble(self, tracks, session_key):
         """ Scrobble tracks.
 
         Args:
             tracks (list(dict)): List over {name, artists, played_at}
         """
         payload = {
-            'api_key': LASTFM_API_KEY,
+            'api_key': self.__key,
             'method': 'track.scrobble',
-            'sk': '<SESSION KEY>'
+            'sk': session_key
         }
 
         for i, track in enumerate(tracks):
@@ -85,7 +93,10 @@ class LastfmClient:
 
 
 if __name__ == "__main__":
-    client = LastfmClient()
+    LASTFM_API_KEY = os.environ['LASTFM_API_KEY']
+    LASTFM_API_SECRET = os.environ['LASTFM_API_SECRET']
+
+    client = LastfmClient(LASTFM_API_KEY, LASTFM_API_SECRET)
     auth_url = client.request_authorization()
     print('Go to:')
     print(auth_url)
