@@ -6,7 +6,7 @@ setup(
     license='MIT',
     packages=find_packages(),
     install_requires=['click', 'python-dateutil', 'requests'],
-    entry_points = {
-        'console_scripts': ['scrobbler=spotify_connect_scrobbler.scrobbler:main']
+    entry_points={
+      'console_scripts': ['scrobbler=spotify_connect_scrobbler.scrobbler:main']
     }
     )

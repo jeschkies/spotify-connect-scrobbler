@@ -6,6 +6,7 @@ import secrets
 import sys
 import urllib
 
+
 class SpotifyClient:
     """ A simple client for the Spotify Web API."""
 
@@ -20,10 +21,9 @@ class SpotifyClient:
         self.__client_secret = client_secret
 
     def _make_authorization_headers(self):
-        auth = "{}:{}".format(self.__client_id, self.__client_secret).encode('ascii')
-        auth_base64 = base64.b64encode(auth).decode('ascii')
+        auth = "{}:{}".format(self.__client_id, self.__client_secret)
+        auth_base64 = base64.b64encode(auth.encode('utf-8')).decode('utf-8')
         return {'Authorization': "Basic {}".format(auth_base64)}
-
 
     def request_authorization(self):
         """Returns an URL the user has to follow to authorize this app."""
@@ -37,11 +37,12 @@ class SpotifyClient:
             'scope': 'user-read-recently-played',
             'state': request_secret
         }
-        params = ("{}={}".format(param, value) for param, value in payload.items())
+        params = ("{}={}".format(param, value)
+                  for param, value
+                  in payload.items())
         auth_url = 'https://accounts.spotify.com/authorize?{}'.format(
                 '&'.join(params))
         return auth_url
-
 
     def request_access_token(self, code):
         """ Returns the access token for Spotify Web API.
@@ -64,7 +65,6 @@ class SpotifyClient:
         return requests.post(
                 'https://accounts.spotify.com/api/token', data=payload).json()
 
-
     def refresh_access_token(self, refresh_token):
         """ Returns the access token for Spotify Web API using a refresh token.
 
@@ -82,9 +82,10 @@ class SpotifyClient:
         }
         headers = self._make_authorization_headers()
         return requests.post(
-                'https://accounts.spotify.com/api/token',
-                data=payload,
-                headers=headers).json()
+            'https://accounts.spotify.com/api/token',
+            data=payload,
+            headers=headers
+        ).json()
 
     def recently_played_tracks(self, auth):
         """Query Spotify for the recently played tracks of user.
@@ -99,8 +100,10 @@ class SpotifyClient:
         token = "{} {}".format(auth['token_type'], auth['access_token'])
         headers = {'Authorization': token}
         response = requests.get(
-                'https://api.spotify.com/v1/me/player/recently-played?limit=50',
-                data=payload, headers=headers)
+            'https://api.spotify.com/v1/me/player/recently-played?limit=50',
+            data=payload,
+            headers=headers
+        )
         if response.ok:
             return response.json()
         elif response.status_code == 401:

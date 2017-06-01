@@ -4,6 +4,7 @@ import os
 import requests
 import urllib
 
+
 class LastfmClient:
     """ A simple client for the Last.fm API."""
 
@@ -16,7 +17,6 @@ class LastfmClient:
         """
         self.__key = key
         self.__secret = secret
-
 
     def sign(self, parameters):
         """ Generates the signature for autheorized API calls.
@@ -37,17 +37,17 @@ class LastfmClient:
         md5.update(string.encode('utf-8'))
         return md5.hexdigest()
 
-
     def request_authorization(self):
         """ Returns authorization URL."""
         payload = {
             'api_key': self.__key,
             'cb': 'https://localhost:4000/steps/3',
         }
-        params = ("{}={}".format(param, value) for param, value in payload.items())
+        params = ("{}={}".format(param, value)
+                  for param, value
+                  in payload.items())
         auth_url = 'http://www.last.fm/api/auth/?{}'.format('&'.join(params))
         return auth_url
-
 
     def request_access_token(self, token):
         """ Request access token from Last.fm.
@@ -67,7 +67,6 @@ class LastfmClient:
         payload['format'] = 'json'
         return requests.post(
             'https://ws.audioscrobbler.com/2.0/', params=payload).json()
-
 
     def scrobble(self, tracks, session_key):
         """ Scrobble tracks.
