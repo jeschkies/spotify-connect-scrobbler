@@ -31,8 +31,8 @@ def convert_to_lastfm(item):
 
 
 @click.command()
-@click.argument('config_file', type=click.Path(exists=True))
-def main(config_file):
+@click.argument('credentials_file', type=click.Path(exists=True))
+def main(credentials_file):
     """Retrieves recently played tracks from Spotify and scrobbles them to
        Last.fm.
     """
@@ -41,7 +41,7 @@ def main(config_file):
     LASTFM_API_KEY = os.environ['LASTFM_API_KEY']
     LASTFM_API_SECRET = os.environ['LASTFM_API_SECRET']
 
-    creds = credentials.load(config_file)
+    creds = credentials.load(credentials_file)
 
     client = SpotifyClient(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
     response = client.recently_played_tracks(creds.spotify)
@@ -53,7 +53,7 @@ def main(config_file):
     print(scrobbles)
 
     # The credentials might have changed.
-    creds.save(config_file)
+    creds.save(credentials_file)
 
 
 if __name__ == "__main__":

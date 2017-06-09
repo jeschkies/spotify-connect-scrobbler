@@ -27,7 +27,21 @@ Verify that the scrobbler is avialable:
   scrobbler --help
   ```
 
-Call `deactivate` to deactivate the environment.
+The scrobbler requires access tokens to the Spotify web API and Last.fm API.
+You authenticate your account with
+
+  ```
+  SPOTIFY_CLIENT_ID=<Your app ID> \
+  SPOTIFY_CLIENT_SECRET=<Your app secret> \
+  spotify <path to credentials file>
+
+  LASTFM_API_KEY=<Your app key> \
+  LASTFM_API_SECRET=<Your app secret>
+  lastfm <path to credentials file>
+  ```
+
+After you've followed the instructions the access tokens are saved to the
+credentials file you've specified.
 
 # Build Instructions
 

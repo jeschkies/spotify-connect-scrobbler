@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 import base64
+import click
 import os
 import requests
 import secrets
 import sys
 import urllib
+
+from .credentials import (Credentials, SpotifyCredentials)
 
 
 class SpotifyClient:
@@ -62,8 +65,14 @@ class SpotifyClient:
             'client_id': self.__client_id,
             'client_secret': self.__client_secret
         }
-        return requests.post(
+        response = requests.post(
                 'https://accounts.spotify.com/api/token', data=payload).json()
+
+        return SpotifyCredentials(
+                response['access_token'],
+                response['token_type'],
+                response['refresh_token'],
+                response['scope'])
 
     def refresh_access_token(self, refresh_token):
         """ Returns the access token for Spotify Web API using a refresh token.
@@ -73,7 +82,7 @@ class SpotifyClient:
             token request.
 
         Returns:
-            dict: The response from Spotify.
+            SpotifyCredentials: The parsed response from Spotify.
         """
         # Get new auth token
         payload = {
@@ -117,19 +126,32 @@ class SpotifyClient:
             sys.exit(1)
 
 
-if __name__ == "__main__":
+@click.command()
+@click.argument('credentials_file', type=click.Path(exists=False))
+def main(credentials_file):
+    """Authenticates with Spotify Web API.
+
+    The authentication credentials are saved to the credentials file.
+    """
     SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
     SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
 
+    # Direct user to authentication URL.
     client = SpotifyClient(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
     auth_url = client.request_authorization()
-    print('Go to:')
-    print(auth_url)
+    click.echo('Go to: {}'.format(auth_url))
 
     # Simulate redirect
-    redirect_url = input('Enter the redirect URL:')
+    redirect_url = click.prompt('Enter the redirect URL', type=str)
     response = urllib.parse.urlparse(redirect_url)
     query = urllib.parse.parse_qs(response.query)
 
-    access_token = client.request_access_token(query['code'])
-    print(access_token)
+    # Retrieve and save credentials.
+    spotify_credentials = client.request_access_token(query['code'])
+    credentials = Credentials(None, spotify_credentials)
+    credentials.save(credentials_file)
+    click.echo('Saved Spotify authentication to {}'.format(credentials_file))
+
+
+if __name__ == "__main__":
+    main()
