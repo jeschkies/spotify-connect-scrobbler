@@ -68,16 +68,18 @@ class LastfmClient:
         return requests.post(
             'https://ws.audioscrobbler.com/2.0/', params=payload).json()
 
-    def scrobble(self, tracks, session_key):
+    def scrobble(self, tracks, credentials):
         """ Scrobble tracks.
 
         Args:
             tracks (list(dict)): List over {name, artists, played_at}
+            credentials (LastfmCredentials): LastFM API credentials object.
         """
+        print(credentials.session_key)
         payload = {
             'api_key': self.__key,
             'method': 'track.scrobble',
-            'sk': session_key
+            'sk': credentials.session_key
         }
 
         for i, track in enumerate(tracks):
@@ -105,5 +107,6 @@ if __name__ == "__main__":
     response = urllib.parse.urlparse(redirect_url)
     query = urllib.parse.parse_qs(response.query)
 
+    print(query)
     access_token = client.request_access_token(query['token'][0])
     print(access_token)

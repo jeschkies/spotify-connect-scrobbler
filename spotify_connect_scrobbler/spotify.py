@@ -91,13 +91,14 @@ class SpotifyClient:
         """Query Spotify for the recently played tracks of user.
 
         Args:
-            auth (dict): The authentication dictionary returned by Spotify.
+            auth (SpotifyCredentials): The authentication credentials returned
+                by Spotify.
 
         Returns:
             dict: A dictionary including tracks and metadata.
         """
         payload = {}
-        token = "{} {}".format(auth['token_type'], auth['access_token'])
+        token = "{} {}".format(auth.token_type, auth.access_token)
         headers = {'Authorization': token}
         response = requests.get(
             'https://api.spotify.com/v1/me/player/recently-played?limit=50',
@@ -108,8 +109,7 @@ class SpotifyClient:
             return response.json()
         elif response.status_code == 401:
             print("Spotify access token expired")
-            auth = self.refresh_access_token(auth['refresh_token'])
-            print(auth)
+            auth.update(self.refresh_access_token(auth.refresh_token))
             # Retry
             return self.recently_played_tracks(auth)
         else:
