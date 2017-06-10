@@ -9,6 +9,6 @@ setup(
     entry_points={
       'console_scripts': [
           'scrobbler=spotify_connect_scrobbler.scrobbler:main',
-          'spotify=spotify_connect_scrobbler.spotify:main']
+          'scrobbler-auth=spotify_connect_scrobbler.auth:main']
     }
     )

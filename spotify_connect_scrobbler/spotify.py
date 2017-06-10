@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 import base64
-import click
-import os
 import requests
 import secrets
 import sys
-import urllib
 
-from .credentials import (Credentials, SpotifyCredentials)
+from .credentials import SpotifyCredentials
 
 
 class SpotifyClient:
@@ -124,34 +121,3 @@ class SpotifyClient:
         else:
             print(response.text)
             sys.exit(1)
-
-
-@click.command()
-@click.argument('credentials_file', type=click.Path(exists=False))
-def main(credentials_file):
-    """Authenticates with Spotify Web API.
-
-    The authentication credentials are saved to the credentials file.
-    """
-    SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
-    SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
-
-    # Direct user to authentication URL.
-    client = SpotifyClient(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
-    auth_url = client.request_authorization()
-    click.echo('Go to: {}'.format(auth_url))
-
-    # Simulate redirect
-    redirect_url = click.prompt('Enter the redirect URL', type=str)
-    response = urllib.parse.urlparse(redirect_url)
-    query = urllib.parse.parse_qs(response.query)
-
-    # Retrieve and save credentials.
-    spotify_credentials = client.request_access_token(query['code'])
-    credentials = Credentials(None, spotify_credentials)
-    credentials.save(credentials_file)
-    click.echo('Saved Spotify authentication to {}'.format(credentials_file))
-
-
-if __name__ == "__main__":
-    main()

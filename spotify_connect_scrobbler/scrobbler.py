@@ -33,8 +33,8 @@ def convert_to_lastfm(item):
 @click.command()
 @click.argument('credentials_file', type=click.Path(exists=True))
 def main(credentials_file):
-    """Retrieves recently played tracks from Spotify and scrobbles them to
-       Last.fm.
+    """Retrieves the 50 most recently played tracks from Spotify and scrobbles
+    them to Last.fm.
     """
     SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
     SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
