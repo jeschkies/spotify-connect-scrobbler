@@ -51,24 +51,25 @@ class Credentials:
         self.spotify = spotify
 
     def save(self, config_file_path):
-        """Save crendetials to file.
+        """Save credentials to file.
 
         Args:
             config_file_path (path-like object): Path to file containing
             credentials. The file os opened and closed by this method.
         """
         with open(config_file_path, 'w') as f:
-            data = {
-                'lastfm': {
-                    'session_key': self.lastfm.session_key
-                },
-                'spotify': {
+            data = {}
+            if self.lastfm is not None:
+                data['lastfm'] = {'session_key': self.lastfm.session_key}
+
+            if self.spotify is not None:
+                data['spotify'] = {
                     'access_token': self.spotify.access_token,
                     'token_type': self.spotify.token_type,
                     'refresh_token': self.spotify.refresh_token,
                     'scope': self.spotify.scope
                 }
-            }
+
             json.dump(data, f)
 
 

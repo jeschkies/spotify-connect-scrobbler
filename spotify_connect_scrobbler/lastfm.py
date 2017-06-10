@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import hashlib
-import os
 import requests
-import urllib
+
+from .credentials import LastfmCredentials
 
 
 class LastfmClient:
@@ -65,8 +65,10 @@ class LastfmClient:
         }
         payload['api_sig'] = self.sign(payload)
         payload['format'] = 'json'
-        return requests.post(
+        response = requests.post(
             'https://ws.audioscrobbler.com/2.0/', params=payload).json()
+
+        return LastfmCredentials(response['session']['key'])
 
     def scrobble(self, tracks, credentials):
         """ Scrobble tracks.
@@ -91,22 +93,3 @@ class LastfmClient:
         payload['format'] = 'json'
         return requests.post(
             'https://ws.audioscrobbler.com/2.0/', params=payload).json()
-
-
-if __name__ == "__main__":
-    LASTFM_API_KEY = os.environ['LASTFM_API_KEY']
-    LASTFM_API_SECRET = os.environ['LASTFM_API_SECRET']
-
-    client = LastfmClient(LASTFM_API_KEY, LASTFM_API_SECRET)
-    auth_url = client.request_authorization()
-    print('Go to:')
-    print(auth_url)
-
-    # Simulate redirect
-    redirect_url = input('Enter the redirect URL:')
-    response = urllib.parse.urlparse(redirect_url)
-    query = urllib.parse.parse_qs(response.query)
-
-    print(query)
-    access_token = client.request_access_token(query['token'][0])
-    print(access_token)

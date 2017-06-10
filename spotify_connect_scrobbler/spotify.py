@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import base64
-import os
 import requests
 import secrets
 import sys
-import urllib
+
+from .credentials import SpotifyCredentials
 
 
 class SpotifyClient:
@@ -62,8 +62,14 @@ class SpotifyClient:
             'client_id': self.__client_id,
             'client_secret': self.__client_secret
         }
-        return requests.post(
+        response = requests.post(
                 'https://accounts.spotify.com/api/token', data=payload).json()
+
+        return SpotifyCredentials(
+                response['access_token'],
+                response['token_type'],
+                response['refresh_token'],
+                response['scope'])
 
     def refresh_access_token(self, refresh_token):
         """ Returns the access token for Spotify Web API using a refresh token.
@@ -73,7 +79,7 @@ class SpotifyClient:
             token request.
 
         Returns:
-            dict: The response from Spotify.
+            SpotifyCredentials: The parsed response from Spotify.
         """
         # Get new auth token
         payload = {
@@ -115,21 +121,3 @@ class SpotifyClient:
         else:
             print(response.text)
             sys.exit(1)
-
-
-if __name__ == "__main__":
-    SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
-    SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
-
-    client = SpotifyClient(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
-    auth_url = client.request_authorization()
-    print('Go to:')
-    print(auth_url)
-
-    # Simulate redirect
-    redirect_url = input('Enter the redirect URL:')
-    response = urllib.parse.urlparse(redirect_url)
-    query = urllib.parse.parse_qs(response.query)
-
-    access_token = client.request_access_token(query['code'])
-    print(access_token)
