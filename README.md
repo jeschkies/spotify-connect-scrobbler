@@ -18,7 +18,7 @@ Activate the environment and install the scrobbler from git:
   ```bash
   cd <path to env>
   source bin/activate
-  pip install git+https://github.com/jeschkies/spotify-connect-scrobbler.git
+  bin/pip install git+https://github.com/jeschkies/spotify-connect-scrobbler.git
   ```
 
 Verify that the scrobbler is avialable:
