@@ -37,11 +37,15 @@ class LastfmClient:
         md5.update(string.encode('utf-8'))
         return md5.hexdigest()
 
-    def request_authorization(self):
-        """ Returns authorization URL."""
+    def request_authorization(self, redirect_uri):
+        """ Returns authorization URL.
+
+        Args:
+            redirect_uri (str): Last.fm redirects to this URL.
+        """
         payload = {
             'api_key': self.__key,
-            'cb': 'https://localhost:4000/steps/3',
+            'cb': redirect_uri,
         }
         params = ("{}={}".format(param, value)
                   for param, value

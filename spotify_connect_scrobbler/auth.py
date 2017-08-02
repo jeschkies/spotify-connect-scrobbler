@@ -22,7 +22,8 @@ def main(credentials_file):
 
     # Direct user to authentication Spotify URL.
     spotify_client = SpotifyClient(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
-    auth_url = spotify_client.request_authorization()
+    auth_url = spotify_client.request_authorization(
+            'https://localhost:4000/steps/2')
     click.echo('Go to: {}'.format(auth_url))
 
     # Simulate redirect
@@ -31,11 +32,13 @@ def main(credentials_file):
     query = urllib.parse.parse_qs(response.query)
 
     # Retrieve credentials.
-    spotify_credentials = spotify_client.request_access_token(query['code'])
+    spotify_credentials = spotify_client.request_access_token(
+            query['code'], 'https://localhost:4000/steps/2')
 
     # Direct user to authentication Spotify URL.
     lastfm_client = LastfmClient(LASTFM_API_KEY, LASTFM_API_SECRET)
-    auth_url = lastfm_client.request_authorization()
+    auth_url = lastfm_client.request_authorization(
+            'https://localhost:4000/steps/3')
     click.echo('Go to: {}'.format(auth_url))
 
     # Simulate redirect

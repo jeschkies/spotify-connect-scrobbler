@@ -25,15 +25,19 @@ class SpotifyClient:
         auth_base64 = base64.b64encode(auth.encode('utf-8')).decode('utf-8')
         return {'Authorization': "Basic {}".format(auth_base64)}
 
-    def request_authorization(self):
-        """Returns an URL the user has to follow to authorize this app."""
+    def request_authorization(self, redirect_uri):
+        """Returns an URL the user has to follow to authorize this app.
+
+        Args:
+            redirect_uri (str): Spotify redirects to this URL.
+        """
 
         # Requests authorization
         request_secret = secrets.token_hex()
         payload = {
             'client_id': self.__client_id,
             'response_type': 'code',
-            'redirect_uri': 'https://localhost:4000/steps/2',
+            'redirect_uri': redirect_uri,
             'scope': 'user-read-recently-played',
             'state': request_secret
         }
@@ -44,11 +48,12 @@ class SpotifyClient:
                 '&'.join(params))
         return auth_url
 
-    def request_access_token(self, code):
+    def request_access_token(self, code, redirect_uri):
         """ Returns the access token for Spotify Web API.
 
         Args:
             code (string): The code passed by the authorization redirect.
+            redirect_uri (str): Spotify redirected to this URL.
 
         Returns:
             dict: The response from Spotify.
@@ -58,7 +63,7 @@ class SpotifyClient:
         payload = {
             'grant_type': 'authorization_code',
             'code': code,
-            'redirect_uri': 'https://localhost:4000/steps/2',
+            'redirect_uri': redirect_uri,
             'client_id': self.__client_id,
             'client_secret': self.__client_secret
         }
