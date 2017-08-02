@@ -33,11 +33,10 @@ class SpotifyCredentials:
         self.scope = scope
 
     def todict(self):
-        return { 'access_token': self.access_token,
-                 'token_type': self.token_type,
-                 'refresh_token': self.refresh_token,
-                 'scope': self.scope
-               }
+        return {'access_token': self.access_token,
+                'token_type': self.token_type,
+                'refresh_token': self.refresh_token,
+                'scope': self.scope}
 
     def update(self, new_credentials):
         """Update the credentials after new tokens were retrieve with the
