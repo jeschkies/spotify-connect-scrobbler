@@ -11,6 +11,9 @@ class LastfmCredentials:
     def __init__(self, session_key):
         self.session_key = session_key
 
+    def todict(self):
+        return {'session_key': self.session_key}
+
 
 class SpotifyCredentials:
     """Spotify credentials contains access and refresh tokens for requests to
@@ -28,6 +31,13 @@ class SpotifyCredentials:
         self.token_type = token_type
         self.refresh_token = refresh_token
         self.scope = scope
+
+    def todict(self):
+        return { 'access_token': self.access_token,
+                 'token_type': self.token_type,
+                 'refresh_token': self.refresh_token,
+                 'scope': self.scope
+               }
 
     def update(self, new_credentials):
         """Update the credentials after new tokens were retrieve with the
@@ -60,15 +70,10 @@ class Credentials:
         with open(config_file_path, 'w') as f:
             data = {}
             if self.lastfm is not None:
-                data['lastfm'] = {'session_key': self.lastfm.session_key}
+                data['lastfm'] = self.lastfm.todict()
 
             if self.spotify is not None:
-                data['spotify'] = {
-                    'access_token': self.spotify.access_token,
-                    'token_type': self.spotify.token_type,
-                    'refresh_token': self.spotify.refresh_token,
-                    'scope': self.spotify.scope
-                }
+                data['spotify'] = self.spotify.todict()
 
             json.dump(data, f)
 
